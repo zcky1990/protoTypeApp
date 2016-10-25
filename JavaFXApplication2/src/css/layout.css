@@ -1,0 +1,15 @@
+.pane {
+     -fx-background-color:#f1f1f1;
+}
+
+.hbox {
+    -fx-background-color: #2f4f4f;
+    -fx-padding: 15;
+    -fx-spacing: 10;
+}
+
+.vbox {
+    -fx-background-color: #fafafa;
+    -fx-padding: 15;
+    -fx-spacing: 10;
+}
