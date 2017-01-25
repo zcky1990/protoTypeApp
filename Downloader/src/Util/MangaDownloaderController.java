@@ -9,11 +9,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.Chapter;
-import model.Manga;
-import model.MangaDetails;
-import model.Pages;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,9 +21,9 @@ import org.jsoup.select.Elements;
  *
  * @author soeltan_z
  */
-public class MangaDownloaderAPI {
+public class MangaDownloaderController {
     
-public Document connectToMangaSite (String url){
+    public Document connectToMangaSite (String url){
         Document doc = null;
         try {
             doc = Jsoup.connect(url).header("Accept-Encoding", "gzip, deflate")
@@ -40,20 +38,24 @@ public Document connectToMangaSite (String url){
     }
     
     
-    public ArrayList<Manga> getMangaList (Document doc, String classId) throws JSONException{
-    ArrayList<Manga> mangaList = new ArrayList<Manga>();
+    public JSONArray getMangaList (Document doc, String classId) throws JSONException{
+    JSONArray mangaList = new JSONArray();
     Elements listManga = doc.getElementsByClass(classId);
-    for (Element mangalist : listManga) {
-      String linkHref = mangalist.attr("href");
-      String linkText = mangalist.text();
-      Manga manga = new Manga(linkHref, linkText);
-      mangaList.add(manga);
+
+    for (Element manga : listManga) {
+      String linkHref = manga.attr("href");
+      String linkText = manga.text();
+      JSONObject mangaUrl = new JSONObject ();
+      mangaUrl.put("url", linkHref);
+      mangaUrl.put("title", linkText);
+      mangaList.put(mangaUrl);
     }
     return mangaList;
     }
     
     
-    public MangaDetails getMangaDescription (String url, String classId) throws JSONException{
+    public JSONObject getMangaDescription (String url, String classId) throws JSONException{
+        JSONObject mangaDetails = new JSONObject();
         Document detailsManga = connectToMangaSite(url);
         Elements details = detailsManga.getElementsByClass(classId);
         
@@ -64,11 +66,20 @@ public Document connectToMangaSite (String url){
         String status  =  getDesc(detailsManga,"status");
         String rank  = getDesc(detailsManga,"rank");
         String summary  = getDescAutorsOrArtistsOrSummary(detailsManga,"summary").replaceAll("Show less","");
+
         String rating = detailsManga.getElementsByClass("scores").first().text();
         String urlImageCover = getMangaCover(details);
         
-        MangaDetails manga = new MangaDetails(altName,genre,author,artist,status,rank,summary,rating,urlImageCover );
-        return manga;
+        mangaDetails.put("img_url", urlImageCover);
+        mangaDetails.put("rate", rating);
+        mangaDetails.put("alt_Name", altName);
+        mangaDetails.put("genre", genre);
+        mangaDetails.put("author", author);
+        mangaDetails.put("artist", artist);
+        mangaDetails.put("status", status);
+        mangaDetails.put("rank", rank);
+        mangaDetails.put("summary", summary);
+        return mangaDetails;
     }
     
     public String getMangaCover (Elements mangaDetails){
@@ -89,22 +100,23 @@ public Document connectToMangaSite (String url){
     return name.text();
     }
      
-
-    public ArrayList<Chapter> getMangaChapter(String Url, String id) throws JSONException{
+     
+    public JSONArray getMangaChapter(String Url, String id) throws JSONException{
+        JSONArray mangaChapterList = new JSONArray();
          Document detailsManga = connectToMangaSite(Url);
          Elements mangaChapters = detailsManga.getElementsByClass(id).select("ul").select("a");
-        ArrayList<Chapter> chapterList = new ArrayList<Chapter>();
-         for(Element chap : mangaChapters){
-             String urlChapter = chap.attr("href");
-             String titleChapter = chap.text();
-             Chapter chapters = new Chapter(urlChapter,titleChapter);
-             chapterList.add(chapters);
+         for(Element chapter : mangaChapters){
+             String urlChapter = chapter.attr("href");
+             String titleChapter = chapter.text();
+             JSONObject chap = new JSONObject();
+             chap.put("chapter_url", urlChapter);
+             chap.put("chapter_title", titleChapter);
+             mangaChapterList.put(chap);
          }
-        return chapterList;
+        return mangaChapterList;
     }
     
-    public Pages getChapterPageList (String url, String classId){
-        
+    public ArrayList<String> getChapterPageList (String url, String classId){
     ArrayList<String> pageList = new ArrayList<String>();
     Document doc = connectToMangaSite(url);
     Elements pages = doc.select("select[class='"+classId+"']").first().getAllElements();
@@ -114,8 +126,7 @@ public Document connectToMangaSite (String url){
              pageList.add(urlPage);
         }
     }
-    Pages pageChapter = new Pages(pageList);
-    return pageChapter;
+    return pageList;
     }
     
     public String getImage(String urlPage, String id){
@@ -131,6 +142,4 @@ public Document connectToMangaSite (String url){
         }
         return urlImage;
     }
-
 }
-

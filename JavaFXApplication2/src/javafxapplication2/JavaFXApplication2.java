@@ -7,6 +7,7 @@ package javafxapplication2;
 
 import Util.MangaDownloaderAPI;
 import Util.MangaDownloaderController;
+import Util.MangaUtility;
 import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -35,9 +36,15 @@ import org.jsoup.nodes.Document;
 public class JavaFXApplication2 extends Application {
     
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws JSONException {
         Button btn = new Button();
         
+            MangaUtility test = new MangaUtility();
+           // test.generateMangaList("MangaHere","http://www.mangahere.co/mangalist/","manga_info" );
+        
+            ArrayList<Manga> mangaListArray = test.readMangaList("MangaHere");
+            System.out.println(mangaListArray.get(7).getTitle());
+            System.out.println(mangaListArray.get(7).getUrlManga());
         
         //try layout
         StackPane root = new StackPane();
@@ -68,7 +75,7 @@ public class JavaFXApplication2 extends Application {
         buttonCurrent.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                vboxtop.getChildren().add(new Text("asdw"));
+                vboxtop.getChildren().add(new Text(mangaListArray.get(7).getTitle()));
             }
         });
         
@@ -92,7 +99,7 @@ public class JavaFXApplication2 extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws JSONException {
-    //    launch(args);
+           
 //        MangaDownloaderController test = new MangaDownloaderController();
 //        Document doc = test.connectToMangaSite("http://www.mangahere.co/mangalist/");
 //        JSONArray mangaList = test.getMangaList(doc, "manga_info");
@@ -102,35 +109,44 @@ public class JavaFXApplication2 extends Application {
 //        System.err.println("url chapter " + url);
 //        ArrayList<String> pages = test.getChapterPageList(url , "wid60");
 //        test.getImage(pages.get(0), "viewer");
+        
+//            MangaUtility test = new MangaUtility();
+//            test.generateMangaList("MangaHere","http://www.mangahere.co/mangalist/","manga_info" );
+//        
+//            ArrayList<Manga> mangaListArray = test.readMangaList("MangaHere");
+//            System.out.println(mangaListArray.get(7).getTitle());
+//            System.out.println(mangaListArray.get(7).getUrlManga());
+      
+//        MangaDownloaderAPI zaki = new MangaDownloaderAPI();
+//        Document doc = zaki.connectToMangaSite("http://www.mangahere.co/mangalist/");
+//        ArrayList<Manga> mangaList = zaki.getMangaList(doc, "manga_info");
+//        System.out.println(mangaList.get(0).getTitle());
+//        
+//        //get Manga List
+//        Manga manga = mangaList.get(4);
+//        System.out.println(manga.getUrlManga());
+//        
+//        //get Manga Description
+//        MangaDetails detailsManga = zaki.getMangaDescription( manga.getUrlManga(),"manga_detail_top");
+//        manga.setMangaDetails(detailsManga);
+//        System.out.println(manga.getMangaDetails().getAltName());
+//        
+//        //get manga Chapters
+//        ArrayList<Chapter> mangaChapter = zaki.getMangaChapter(manga.getUrlManga(), "detail_list");
+//        manga.getMangaDetails().setChapters(mangaChapter);
+//        System.out.println(manga.getMangaDetails().getChapters().get(2).getChapterTitle());
+//        System.out.println(manga.getMangaDetails().getChapters().get(2).getUrlChapter());
+//        
+//        //get chapter Pages
+//        Pages chapterPages = zaki.getChapterPageList(manga.getMangaDetails().getChapters().get(2).getUrlChapter(), "wid60");
+//        manga.getMangaDetails().getChapters().get(2).setPage(chapterPages);
+//        System.out.println(manga.getMangaDetails().getChapters().get(2).getPage().getPageMangaUrl().get(9));
+//        
+//        //load Image
+//        String url = zaki.getImage(manga.getMangaDetails().getChapters().get(2).getPage().getPageMangaUrl().get(9), "viewer");
+//        System.out.println(url);
 
-        MangaDownloaderAPI zaki = new MangaDownloaderAPI();
-        Document doc = zaki.connectToMangaSite("http://www.mangahere.co/mangalist/");
-        ArrayList<Manga> mangaList = zaki.getMangaList(doc, "manga_info");
-        System.out.println(mangaList.get(0).getTitle());
-        
-        //get Manga List
-        Manga manga = mangaList.get(4);
-        System.out.println(manga.getUrlManga());
-        
-        //get Manga Description
-        MangaDetails detailsManga = zaki.getMangaDescription( manga.getUrlManga(),"manga_detail_top");
-        manga.setMangaDetails(detailsManga);
-        System.out.println(manga.getMangaDetails().getAltName());
-        
-        //get manga Chapters
-        ArrayList<Chapter> mangaChapter = zaki.getMangaChapter(manga.getUrlManga(), "detail_list");
-        manga.getMangaDetails().setChapters(mangaChapter);
-        System.out.println(manga.getMangaDetails().getChapters().get(2).getChapterTitle());
-        System.out.println(manga.getMangaDetails().getChapters().get(2).getUrlChapter());
-        
-        //get chapter Pages
-        Pages chapterPages = zaki.getChapterPageList(manga.getMangaDetails().getChapters().get(2).getUrlChapter(), "wid60");
-        manga.getMangaDetails().getChapters().get(2).setPage(chapterPages);
-        System.out.println(manga.getMangaDetails().getChapters().get(2).getPage().getPageMangaUrl().get(9));
-        
-        //load Image
-        String url = zaki.getImage(manga.getMangaDetails().getChapters().get(2).getPage().getPageMangaUrl().get(9), "viewer");
-        System.out.println(url);
+        launch(args);
     }
     
 }

@@ -1,0 +1,13 @@
+[
+  {
+    "manga_site": "MangaHere",
+    "manga_url":"http://www.mangahere.co/mangalist/",
+    "config": {
+      "manga_list": "manga_info",
+      "description": "manga_detail_top",
+      "chapter": "detail_list",
+      "pages": "wid60",
+      "image": "viewer"
+    }
+  }
+]
